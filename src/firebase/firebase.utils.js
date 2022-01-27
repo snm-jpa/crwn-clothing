@@ -11,10 +11,42 @@ const config = {
     appId: "1:301751513805:web:23f49950ee2d9fe5d3ef84"
 }
 
+
+/*
+    A query reference obj is an obj that represents the 'current' place in the DB we are querying
+    Eg. firestore.doc('/users/:userId'), firestore.collections('/users')
+    DocumentReference: CRUD - set(), get(), update(), delete()
+*/
+
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+    if (!userAuth) return;
+
+    const userRef = firestore.doc(`users/${userAuth.uid}`);
+    const snapShot = await userRef.get();
+
+    if (!snapShot.exists) {
+        const { displayName, email } = userAuth;
+        const createdAt = new Date();
+        
+        try {
+            await userRef.set({
+                displayName,
+                email,
+                createdAt,
+                ...additionalData
+            })
+        } catch (error) {
+            console.log('error creating user', error.message);
+        }
+    }
+
+    return userRef;
+}
+
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();
-export const firestorm = firebase.firestore();
+export const firestore = firebase.firestore();
 
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
