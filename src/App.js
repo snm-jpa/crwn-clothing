@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import shopPage from './pages/shop/shop.component.jsx';
@@ -28,9 +28,11 @@ class App extends React.Component {
   componentDidMount() {
     console.log('component did mount called');
 
-    const { setCurrentuser } = this.props;
-
-
+    //this.props = { setCurrentuser: user => dispatch(setCurrentuser(user)) } @ line # 88
+    //this.props = { setCurrentuser: user => dispatch({type: 'SET_CURRENT_USER', payload: user})}
+    //cuz, setCurrentuser(user) ---returns---> {type: 'SET_CURRENT_USER', payload: user} from user.actions.js
+    //dispatch is a fn of the redux store. Can call by store.dispatch to dispatch an action. Only way to trigger a state change.
+    const { setCurrentuser } = this.props; //setCurrentUser = user => dispatch(setCurrentuser(user)), so dispatch(action)
 
 
     //Adds an observer for changes to the user's sign-in state.
@@ -51,7 +53,7 @@ class App extends React.Component {
 
           setCurrentuser({
             id: snapshot.id,
-            ...snapshot.data()
+            ...snapshot.data()  //snapshot.data() = {createdAt: at, displayName: 'snm jpa', email: 'snm.jpa@gmail.com'} coming from [[Prototype]]
           })
         });
       }
@@ -75,15 +77,39 @@ class App extends React.Component {
         <Switch>
           <Route exact path='/' component={HomePage} />
           <Route path='/shop' component={shopPage} />
-          <Route path='/signin' component={SignInAndSignUpPage}></Route>
+          <Route
+            exact
+            path='/signin'
+            render={() =>
+              this.props.currentUser ?
+                (<Redirect to='/' />) : (
+                  <SignInAndSignUpPage />)}>
+          </Route>
         </Switch>
       </div>
     );
   }
 }
 
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser
+});
+
+// 2nd option of dispatching action
+// mapDispatchToProps is used for dispatching actions to the store.
+// normally referred to as mapDispatch
 const mapDispatchToProps = dispatch => ({
   setCurrentuser: user => dispatch(setCurrentuser(user))
 })
 
-export default connect(null, mapDispatchToProps)(App);
+
+/*
+With React Redux, your components never access the store directly - connect does it for you. React Redux gives you two ways to let components dispatch actions:
+  1)By default, a connected component receives props.dispatch and can dispatch actions itself.
+  2)connect can accept an argument called mapDispatchToProps, which lets you create functions that dispatch when called, and ****pass those functions as props to your component***.
+It provides its connected component with the pieces of the data it needs from the store, and the functions it can use to dispatch actions to the store.
+It does not modify the component class passed to it; instead, it returns a new, connected component class that wraps the component you passed in.
+*/
+export default connect(mapStateToProps, mapDispatchToProps)(App); /*connects App to a Redux store.*/
+
+//export default connect(null, null)(App); /*if 2nd arg null, then this.props = {dispatch: f} 

@@ -8,6 +8,7 @@ import { ReactComponent as Logo } from '../../assests/crown.svg';
 
 import './header.styles.scss';
 
+//currentUser is coming from reducer
 const Header = ({ currentUser }) => (
     <div className='header'>
         <Link className='logo-container' to="/">
@@ -31,8 +32,13 @@ const Header = ({ currentUser }) => (
 )
 
 //@param state is the root reducer
+//Any time the store is updated, mapStateToProps will be called. 
+//Must be plain obj, which will be merged into the wrapped component's props
+//If don't want to subscribe to store updates, pass NULL or UNDEFINED in place of mapStateToProps
 const mapStateToProps = state => ({
     currentUser: state.user.currentUser
 })
 
-export default connect(mapStateToProps)(Header);
+//The connect() function connects a React component to a Redux store.  
+//1) get {currentUser = null} as initial state and 2) pass {currentUser = null} to the Header Component above, instead of passing it as a prop from App.js
+export default connect(mapStateToProps)(Header); 
