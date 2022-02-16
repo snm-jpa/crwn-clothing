@@ -91,13 +91,42 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = ({ user }) => ({
+//mapStateToProps is used for selecting the part of the data from the store that the connected component needs.
+//-It is called every time the store state changes.
+//-It receives the entire store state, and should return an object of data this component needs.
+// If don't like to subscribe to the store, pass null or undefined
+/*
+  @param state: Entire Redux store state (same as store.getState())
+  @param ownProps (optional)
+  function mapStateToProps(state, ownProps?)
+  const mapStateToProps = (state) => { }
+
+  return: plain js object, that contains the data the comopnent needs.
+*/
+/*
+state = {
+cart: {hidden: true, cartItems: Array(0)}
+user: {currentUser: null}
+}
+*/
+/*
+const mapStateToProps = function(state) {
+  console.log(state);
+  const {user} = state;
+  return{
+    currentUser: user.currentUser
+  }
+}*/
+const mapStateToProps = ({ user }) => ({    //just destrucuting the state
   currentUser: user.currentUser
 });
 
-// 2nd option of dispatching action
 // mapDispatchToProps is used for dispatching actions to the store.
 // normally referred to as mapDispatch
+//dispatch is a Fn of the redux store
+//Because we provided mapDispatchToProps in the connect() Fn, It lets us provide ACTION DISPATCHING FUNCTION as props in the component.
+//So we may call props.increment() instead of props.dispatch(()=> increment()).
+//There are 2 forms of mapDispatchToProps 1) Function form (more customization, gain access to dispatch * ownProps) 2) Object shorthand form (Redux recommend this form)
 const mapDispatchToProps = dispatch => ({
   setCurrentuser: user => dispatch(setCurrentuser(user))
 })
@@ -110,6 +139,6 @@ With React Redux, your components never access the store directly - connect does
 It provides its connected component with the pieces of the data it needs from the store, and the functions it can use to dispatch actions to the store.
 It does not modify the component class passed to it; instead, it returns a new, connected component class that wraps the component you passed in.
 */
-export default connect(mapStateToProps, mapDispatchToProps)(App); /*connects App to a Redux store.*/
+export default connect(mapStateToProps, mapDispatchToProps)(App); /*connects App to a Redux store. connect fn has access to the store becuase of <Providor/> in index.js*/ 
 
 //export default connect(null, null)(App); /*if 2nd arg null, then this.props = {dispatch: f} 

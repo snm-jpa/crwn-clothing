@@ -39,7 +39,26 @@ const Header = ({ currentUser, hidden }) => (
 //mapStateToProps is used for selecting the part of the data from the store that the connected component needs.
 //mapStateToProps function is called every time the store state changes. If don't want to subscriber pass null or undefined to connect
 //It receives the entire store state, and should return an object of data this component needs.
-const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
+/* eg, state = {
+    "user": {
+        "currentUser": null
+    },
+    "cart": {
+        "hidden": true
+    }
+}*/
+/*
+    should return plain object that contains the data the component needs
+    function mapStateToProps(state) {
+            return {
+                currentUser: null,
+                hidden: true
+            }
+    }
+    -Each field in the object will become a prop for your actual component
+    -the values in the fields will be used to determine if your component needs to re-render
+*/
+const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({         //destructuing nested object
     currentUser,
     hidden
 })
