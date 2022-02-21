@@ -1,10 +1,11 @@
-import React from 'react';
+import React from 'react';                       //Default Import
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom'; //Named Import
 import { Provider } from 'react-redux';
 import './index.css';
 import App from './App';
 import store from './redux/store';
+
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 

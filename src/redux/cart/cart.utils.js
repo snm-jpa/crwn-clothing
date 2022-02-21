@@ -1,6 +1,10 @@
 //Utils Functions allows us to keep our files clean and organize functions that we may need in multiple files in one location
 
 export const addItemToCart = (cartItems, cartItemToAdd) => {
+
+    console.log(cartItems);
+    console.log(cartItemToAdd);
+
     const existingCartItem = cartItems.find(
         cartItem => cartItem.id === cartItemToAdd.id
     );

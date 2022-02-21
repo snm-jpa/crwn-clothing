@@ -58,10 +58,23 @@ const Header = ({ currentUser, hidden }) => (
     -Each field in the object will become a prop for your actual component
     -the values in the fields will be used to determine if your component needs to re-render
 */
-const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({         //destructuing nested object
-    currentUser,
-    hidden
-})
+
+// Return Values Determine If Your Component Re-Renders​
+// mapStateToProps runs         when:	store state changes
+// component re-renders         when:	any field of stateProps is different
+// const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({         //destructuing nested object
+//     currentUser,
+//     hidden
+// })
+
+const mapStateToProps = function({ user: { currentUser }, cart: { hidden } }){
+console.log();
+    return {
+        currentUser,
+        hidden
+    }
+}
+
 
 //The connect() function connects a React component to a Redux store.  
 //1) get {currentUser = null} as initial state and 2) pass {currentUser = null} to the Header Component above, instead of passing it as a prop from App.js

@@ -37,6 +37,8 @@ class App extends React.Component {
 
     //Adds an observer for changes to the user's sign-in state.
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+
+      //userAuth = null if not signed in
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
 
@@ -60,7 +62,8 @@ class App extends React.Component {
       else {
         //this.setState({ currentUser: userAuth })    //if userAuth==null
 
-        setCurrentuser(userAuth);
+        // (user) => dispatch(setCurrentuser(user)), where user=null ---> dispatch({type: 'SET_CURRENT_USER', payload: null}) -----> userReducer()
+        setCurrentuser(userAuth);     
 
       }
     })
@@ -127,9 +130,13 @@ const mapStateToProps = ({ user }) => ({    //just destrucuting the state
 //Because we provided mapDispatchToProps in the connect() Fn, It lets us provide ACTION DISPATCHING FUNCTION as props in the component.
 //So we may call props.increment() instead of props.dispatch(()=> increment()).
 //There are 2 forms of mapDispatchToProps 1) Function form (more customization, gain access to dispatch * ownProps) 2) Object shorthand form (Redux recommend this form)
-const mapDispatchToProps = dispatch => ({
-  setCurrentuser: user => dispatch(setCurrentuser(user))
-})
+const mapDispatchToProps = function(dispatch) {
+  console.log(dispatch);
+  return {setCurrentuser: user => dispatch(setCurrentuser(user))}
+}
+// const mapDispatchToProps = dispatch => ({
+//   setCurrentuser: user => dispatch(setCurrentuser(user))
+// })
 
 
 /*
@@ -139,6 +146,21 @@ With React Redux, your components never access the store directly - connect does
 It provides its connected component with the pieces of the data it needs from the store, and the functions it can use to dispatch actions to the store.
 It does not modify the component class passed to it; instead, it returns a new, connected component class that wraps the component you passed in.
 */
-export default connect(mapStateToProps, mapDispatchToProps)(App); /*connects App to a Redux store. connect fn has access to the store becuase of <Providor/> in index.js*/ 
+
+
+/*connects App to a Redux store. connect fn has access to the store becuase of <Providor/> in index.js*/ 
+//It does not modify the component class passed to it; instead it returns a new, connected component class that wraps the component you passed in
+//Provides connected component, .i.e App, with the piece of data it needs from the store, and the functions it can use to dispatch actions to the store.
+//connect(mapStateToProps, mapDispatchToProps) ---> returns ƒunction wrapWithConnect(WrappedComponent), we pass 'App' into wrapWithConnect
+//wrapWithConnect(App) --> now the 'App' will have access to data(state) from the store, functions to dispatch actions to the store
+//inside, wrapWithConnect(WrappedComponent), i.e wrapWithConnect(App), App will get all the required data from the store.
+// Eg, function wrappWithConnect(WrappedComponent) {
+//           return <WrappedComponent currentUser=null setCurrentuser = {user => dispatch(setCurrentuser(user) } /> //WrappedComponent=App
+//     }
+//connect( {currentUser: null}, 
+//         {setCurrentuser: user => dispatch(setCurrentuser(user))} 
+//        ) (App)
+export default connect(mapStateToProps, mapDispatchToProps)(App); 
+
 
 //export default connect(null, null)(App); /*if 2nd arg null, then this.props = {dispatch: f} 
